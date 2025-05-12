@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Subir Imagen y Descargar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light py-5">
+
+<div class="container bg-white p-4 rounded shadow" style="max-width: 600px;">
+  <h1 class="text-center mb-4">Subir Imagen y Descargar</h1>
+
+  <div class="mb-3">
+    <label for="imagen" class="form-label">Selecciona una imagen:</label>
+    <input class="form-control" type="file" id="imagen" accept="image/*">
+  </div>
+
+  <div id="preview" class="text-center mb-3">
+    <p class="text-muted">Aquí aparecerá la miniatura de la imagen seleccionada.</p>
+  </div>
+
+  <!-- Enlace de descarga -->
+  <div class="text-center">
+    <a id="descargar" href="#" download class="btn btn-success" style="display: none;">Descargar Imagen</a>
+  </div>
+</div>
+
+<script>
+document.getElementById('imagen').addEventListener('change', function(event) {
+  const archivo = event.target.files[0];
+
+  if (archivo) {
+	// Mostrar la información completa en la consola
+    console.log('Información del archivo seleccionado:');
+    console.log('Nombre:', archivo.name);
+    console.log('Tipo MIME:', archivo.type);
+    console.log('Tamaño (bytes):', archivo.size);
+    console.log('Última modificación:', new Date(archivo.lastModified));
+    
+	// Validamos que sea una imagen
+    if (!archivo.type.startsWith('image/')) {
+      alert('Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+
+    const lector = new FileReader();
+
+    lector.onload = function(e) {
+      const preview = document.getElementById('preview');
+      preview.innerHTML = `
+        <p class="text-muted">Vista previa:</p>
+        <img src="${e.target.result}" class="img-thumbnail mb-3" style="max-width: 300px;">
+      `;
+
+      // Generar enlace de descarga
+      const descargar = document.getElementById('descargar');
+      descargar.href = e.target.result;
+      descargar.download = archivo.name; // Nombre original del archivo
+      descargar.style.display = 'inline-block';
+    };
+
+    lector.readAsDataURL(archivo);
+  } else {
+    // Si no hay archivo seleccionado, limpiar la vista previa y ocultar el botón de descarga
+    document.getElementById('preview').innerHTML = '<p class="text-muted">Aquí aparecerá la miniatura de la imagen seleccionada.</p>';
+    document.getElementById('descargar').style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>
